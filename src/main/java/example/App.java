@@ -18,7 +18,7 @@ import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
 public class App {
 
     private static final String genomeSeqPattern = "[ACGT]{20,}";
-    private static final String genomeIdPatternString = "@((.+?-){3}.+?)\\s";
+    private static final String genomeIdPatternString = "@((.+?-){3}.+?)\\s.*";
     static Pattern genomeIdPattern = Pattern.compile(genomeIdPatternString);
 
     public static void main(String[] args) {
@@ -38,8 +38,9 @@ public class App {
         for (String line :
                 lineList) {
             Matcher matcher = genomeIdPattern.matcher(line);
+            System.out.println("In for loop");
             if (matcher.matches()) {
-                key = matcher.group(0);
+                key = matcher.group(1);
                 System.out.println("\n\n\nFound genomeID: " + key + "\n\n\n");
             } else if (line.matches(genomeSeqPattern)) {
                 value = line;
