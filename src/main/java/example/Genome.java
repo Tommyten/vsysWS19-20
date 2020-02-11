@@ -6,6 +6,7 @@ public class Genome implements Serializable {
 
     private String key;
     private String value;
+    private String barcode;
 
     public Genome() {
     }
@@ -13,6 +14,7 @@ public class Genome implements Serializable {
     public Genome(String key, String value) {
         this.key = key;
         this.value = value;
+        barcode = "";
     }
 
     public String getKey() {
@@ -30,4 +32,8 @@ public class Genome implements Serializable {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public String getBarcode() { return barcode; }
+
+    public void setBarcode(String barcode) { this.barcode = barcode; }
 }
