@@ -36,4 +36,13 @@ public class Genome implements Serializable {
     public String getBarcode() { return barcode; }
 
     public void setBarcode(String barcode) { this.barcode = barcode; }
+
+    @Override
+    public String toString() {
+        return "Genome{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", barcode='" + barcode + '\'' +
+                '}';
+    }
 }
