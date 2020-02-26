@@ -37,6 +37,10 @@ public class SparkStreaming {
 
         JavaDStream<Genome> genomeStream = lines.map((Function<String, Genome>) s -> objectMapper.readValue(s, Genome.class));
 
+//        JavaDStream<Genome> genomesWithBC = lines.
+
+        genomeStream.print();
+
         jssc.start();              // Start the computation
         jssc.awaitTermination();   // Wait for the computation to terminate}
     }
