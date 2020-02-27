@@ -1,11 +1,16 @@
 package example;
 
+import com.datastax.spark.connector.japi.CassandraStreamingJavaUtil;
+import com.sun.tools.javac.jvm.Gen;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.codehaus.janino.Java;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,45 +45,62 @@ public class App {
     private static final String barcodePrefix = "GCTTGGGTGTTTAACC";
 
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("ReadTest");
+        SparkConf conf = new SparkConf()
+                .setMaster("spark://spark-master:7077")
+                .setAppName("Barcode Analysis")
+                .set("spark.cassandra.connection.host", "cassandra");
         JavaSparkContext context = new JavaSparkContext(conf);
 
         List<Genome> genomeList = new ArrayList<>();
 
         JavaRDD<String> lines = context.textFile("vsysWS19-20/target/classes/test.fastq");
 
-        String key = "";
-        String value = "";
 
-        List<String> lineList = lines.collect();
+//        List<String> lineList = lines.collect();
 
-        for (String line :
+        Genome genome = new Genome();
+
+        JavaRDD<Genome> genomeRDD = lines.map(s -> {
+            String key = "";
+            String value = "";
+
+            Matcher matcher = genomeIdPattern.matcher(s);
+            if (matcher.matches()) {
+                genome.setKey(matcher.group(1));
+            } else if (s.matches(genomeSeqPattern)) {
+                genome.setValue(s);
+            }
+
+            return genome;
+        });
+
+        /*for (String line :
                 lineList) {
             Matcher matcher = genomeIdPattern.matcher(line);
-            System.out.println("In for loop");
             if (matcher.matches()) {
                 key = matcher.group(1);
-                System.out.println("\n\n\nFound genomeID: " + key + "\n\n\n");
             } else if (line.matches(genomeSeqPattern)) {
-                value = line;
-                System.out.println("\n\n\nFound genome: " + value + "\n\n\n");
+                value = line;;
             }
 
             if (!key.isEmpty() && !value.isEmpty()) {
                 genomeList.add(new Genome(key, value));
                 key = "";
                 value = "";
-                System.out.println("\n\n\nAdded genome!\n\n\n");
             }
-        }
+        }*/
+        JavaRDD<Genome> genomesWithBarcode = genomeRDD.map(genome1 -> {
+            determineBarcode(genome1);
+            return genome1;
+        });
 
-        for(Genome genome : genomeList) {
-            determineBarcode(genome);
-        }
+        Map<String, String> fieldToColumnMapping = new HashMap<>();
+        fieldToColumnMapping.put("key", "id");
+        fieldToColumnMapping.put("barcode", "barcode");
 
-        System.out.println("\n\n\n\nLIST LENGTH: " + genomeList.size() + "\n\n\n");
-        JavaRDD<Genome> rdd = context.parallelize(genomeList);
-        javaFunctions(rdd).writerBuilder("genomes", "kv", mapToRow(Genome.class)).saveToCassandra();
+        javaFunctions(genomesWithBarcode)
+                .writerBuilder("genome", "data", mapToRow(Genome.class, fieldToColumnMapping))
+                .saveToCassandra();
 
         context.stop();
     }
