@@ -106,6 +106,7 @@ public class App {
     }
 
     private static void determineBarcode(Genome genome) {
+        if(genome == null) return;
         int[] scorePerBarcode = new int[BARCODES.length];
         for(int i = 0; i < BARCODES.length; i++) {
             String fullString = barcodePrefix + BARCODES[i]; //TODO: Test with barcodePostfix
