@@ -55,26 +55,11 @@ public class App {
 
         JavaRDD<String> lines = context.textFile("vsysWS19-20/target/classes/test.fastq");
 
+        String key = "";
+        String value = "";
+        List<String> lineList = lines.collect();
 
-//        List<String> lineList = lines.collect();
-
-        Genome genome = new Genome();
-
-        JavaRDD<Genome> genomeRDD = lines.map(s -> {
-            String key = "";
-            String value = "";
-
-            Matcher matcher = genomeIdPattern.matcher(s);
-            if (matcher.matches()) {
-                genome.setKey(matcher.group(1));
-            } else if (s.matches(genomeSeqPattern)) {
-                genome.setValue(s);
-            }
-
-            return genome;
-        });
-
-        /*for (String line :
+        for (String line :
                 lineList) {
             Matcher matcher = genomeIdPattern.matcher(line);
             if (matcher.matches()) {
@@ -88,17 +73,15 @@ public class App {
                 key = "";
                 value = "";
             }
-        }*/
-        JavaRDD<Genome> genomesWithBarcode = genomeRDD.map(genome1 -> {
-            determineBarcode(genome1);
-            return genome1;
-        });
-
+        }
+        for(Genome genome : genomeList) {
+            determineBarcode(genome);
+        }
         Map<String, String> fieldToColumnMapping = new HashMap<>();
         fieldToColumnMapping.put("key", "id");
         fieldToColumnMapping.put("barcode", "barcode");
-
-        javaFunctions(genomesWithBarcode)
+        JavaRDD<Genome> rdd = context.parallelize(genomeList);
+        javaFunctions(rdd)
                 .writerBuilder("genome", "data", mapToRow(Genome.class, fieldToColumnMapping))
                 .saveToCassandra();
 
