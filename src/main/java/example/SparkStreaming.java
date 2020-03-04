@@ -69,6 +69,9 @@ public class SparkStreaming {
 
         JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
 
+        System.out.println("Printing Genome Stream: ");
+        genomeStream.print();
+        System.out.println("Printed Genome Stream!");
 
         JavaDStream<Genome> genomesWithBC = genomeStream.map(genome -> {
             determineBarcode(genome);
