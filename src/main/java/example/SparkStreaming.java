@@ -47,7 +47,7 @@ public class SparkStreaming {
         SparkConf conf = new SparkConf()
                 .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
-                .set("spark.cassandra.connection.host", "192.168.228.1");
+                /*.set("spark.cassandra.connection.host", "192.168.228.1")*/;
 
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
@@ -78,9 +78,9 @@ public class SparkStreaming {
         fieldToColumnMapping.put("key", "id");
         fieldToColumnMapping.put("barcode", "barcode");
 
-        javaFunctions(genomesWithBC)
+        /*javaFunctions(genomesWithBC)
                 .writerBuilder("genome", "data", mapToRow(Genome.class, fieldToColumnMapping))
-                .saveToCassandra();
+                .saveToCassandra();*/
 
         genomesWithBC.print();
 
