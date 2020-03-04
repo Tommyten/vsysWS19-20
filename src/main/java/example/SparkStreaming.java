@@ -51,43 +51,41 @@ public class SparkStreaming {
         SparkConf conf = new SparkConf()
                 .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
-                /*.set("spark.cassandra.connection.host", "192.168.228.1")*/;
+                .set("spark.cassandra.connection.host", "10.244.1.2");
 
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
-        JavaReceiverInputDStream<String> stream = jssc.socketTextStream("localhost", 9999);
-
-        /*Map<String, Object> kafkaParams = new HashMap<>();
-        kafkaParams.put("bootstrap.servers", "service-test:9092");
+        Map<String, Object> kafkaParams = new HashMap<>();
+        kafkaParams.put("bootstrap.servers", "10.244.3.6:9092");
         kafkaParams.put("key.deserializer", StringDeserializer.class);
         kafkaParams.put("value.deserializer", StringDeserializer.class);
         kafkaParams.put("group.id", "temperatureAlert");
-        kafkaParams.put("auto.offset.reset", "earliest");*/
+        kafkaParams.put("auto.offset.reset", "earliest");
 
-//        Collection<String> topics = Arrays.asList("genome-data");
+        Collection<String> topics = Arrays.asList("genome-data");
 
-        /*JavaInputDStream<ConsumerRecord<String, String>> stream =
+        JavaInputDStream<ConsumerRecord<String, String>> stream =
                 KafkaUtils.createDirectStream(
                         jssc,
                         LocationStrategies.PreferBrokers(),
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
-                );*/
+                );
 
-//        JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
-        JavaDStream<Genome> genomeStream = stream.map(s -> objectMapper.readValue(s, Genome.class));
+        JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
+//        JavaDStream<Genome> genomeStream = stream.map(s -> objectMapper.readValue(s, Genome.class));
 
         JavaDStream<Genome> genomesWithBC = genomeStream.map(genome -> {
             determineBarcode(genome);
             return genome;
         });
 
-        /*Map<String, String> fieldToColumnMapping = new HashMap<>();
+        Map<String, String> fieldToColumnMapping = new HashMap<>();
         fieldToColumnMapping.put("key", "id");
-        fieldToColumnMapping.put("barcode", "barcode");*/
+        fieldToColumnMapping.put("barcode", "barcode");
 
-        /*javaFunctions(genomesWithBC)
+        javaFunctions(genomesWithBC)
                 .writerBuilder("genome", "data", mapToRow(Genome.class, fieldToColumnMapping))
-                .saveToCassandra();*/
+                .saveToCassandra();
 
         genomesWithBC.print();
 
