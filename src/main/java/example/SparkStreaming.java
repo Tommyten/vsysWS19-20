@@ -1,7 +1,10 @@
 package example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.spark.SparkConf;
+import org.apache.spark.*;
+import org.apache.spark.api.java.function.*;
+import org.apache.spark.streaming.*;
+import org.apache.spark.streaming.api.java.*;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -49,7 +52,7 @@ public class SparkStreaming {
                 .setAppName("Barcode Analysis")
                 /*.set("spark.cassandra.connection.host", "192.168.228.1")*/;
 
-        JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, Duration.apply(1000));
 
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "service-test:9092");
