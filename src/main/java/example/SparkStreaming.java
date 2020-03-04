@@ -52,7 +52,7 @@ public class SparkStreaming {
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
         Map<String, Object> kafkaParams = new HashMap<>();
-        kafkaParams.put("bootstrap.servers", "test-service:9092");
+        kafkaParams.put("bootstrap.servers", "service-test:9092");
         kafkaParams.put("key.deserializer", StringDeserializer.class);
         kafkaParams.put("value.deserializer", StringDeserializer.class);
         kafkaParams.put("group.id", "temperatureAlert");
