@@ -47,7 +47,7 @@ public class SparkStreaming {
         SparkConf conf = new SparkConf()
                 .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
-                .set("spark.cassandra.connection.host", "cassandra");
+                .set("spark.cassandra.connection.host", "192.168.228.1");
 
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
