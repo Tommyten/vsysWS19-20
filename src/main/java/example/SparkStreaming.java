@@ -56,22 +56,18 @@ public class SparkStreaming {
         kafkaParams.put("key.deserializer", StringDeserializer.class);
         kafkaParams.put("value.deserializer", StringDeserializer.class);
         kafkaParams.put("group.id", "temperatureAlert");
-        kafkaParams.put("auto.offset.reset", "latest");
+        kafkaParams.put("auto.offset.reset", "earliest");
 
         Collection<String> topics = Arrays.asList("genome-data");
 
         JavaInputDStream<ConsumerRecord<String, String>> stream =
                 KafkaUtils.createDirectStream(
                         jssc,
-                        LocationStrategies.PreferConsistent(),
+                        LocationStrategies.PreferBrokers(),
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
                 );
 
         JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
-
-        System.out.println("Printing Genome Stream: ");
-        genomeStream.print();
-        System.out.println("Printed Genome Stream!");
 
         JavaDStream<Genome> genomesWithBC = genomeStream.map(genome -> {
             determineBarcode(genome);
@@ -85,6 +81,8 @@ public class SparkStreaming {
         javaFunctions(genomesWithBC)
                 .writerBuilder("genome", "data", mapToRow(Genome.class, fieldToColumnMapping))
                 .saveToCassandra();
+
+        genomesWithBC.print();
 
         jssc.start();              // Start the computation
         jssc.awaitTermination();   // Wait for the computation to terminate}
