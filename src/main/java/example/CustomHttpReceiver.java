@@ -39,10 +39,10 @@ public class CustomHttpReceiver extends Receiver<Genome> {
         }
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(nginxUrl.openStream()))) {
-            String inputLine;
+            String inputLine = in.readLine();
             String key = "";
             String value = "";
-            while((inputLine = in.readLine()) != null) {
+            while(!isStopped() && inputLine != null) {
                 Matcher matcher = genomeIdPattern.matcher(inputLine);
                 if (matcher.matches()) {
                     key = matcher.group(1);
@@ -56,6 +56,7 @@ public class CustomHttpReceiver extends Receiver<Genome> {
                     key = "";
                     value = "";
                 }
+                inputLine = in.readLine();
             }
         } catch (IOException e) {
             stop(e.getMessage());
