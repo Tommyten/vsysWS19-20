@@ -66,8 +66,7 @@ public class SparkStreaming {
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
                 );
 
-        JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
-//        JavaDStream<Genome> genomeStream = stream.map(s -> objectMapper.readValue(s, Genome.class));
+        JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> new Genome(record.key(), record.value()));
 
         JavaDStream<Genome> genomesWithBC = genomeStream.map(genome -> {
             determineBarcode(genome);
