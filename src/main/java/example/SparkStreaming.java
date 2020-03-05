@@ -1,16 +1,12 @@
 package example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.tools.javac.jvm.Gen;
-import org.apache.spark.*;
-import org.apache.spark.api.java.function.*;
-import org.apache.spark.streaming.*;
-import org.apache.spark.streaming.api.java.*;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
@@ -23,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
-import static com.datastax.spark.connector.japi.CassandraStreamingJavaUtil.*;
+import static com.datastax.spark.connector.japi.CassandraStreamingJavaUtil.javaFunctions;
 
 public class SparkStreaming {
 
