@@ -45,7 +45,6 @@ public class SparkStreamingCustomReceiver {
         ObjectMapper objectMapper = new ObjectMapper();
 
         SparkConf conf = new SparkConf()
-                .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
                 .set("spark.cassandra.connection.host", "cassandra");
 

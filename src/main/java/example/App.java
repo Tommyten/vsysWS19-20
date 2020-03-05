@@ -1,11 +1,8 @@
 package example;
 
-import com.datastax.spark.connector.japi.CassandraStreamingJavaUtil;
-import com.sun.tools.javac.jvm.Gen;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.codehaus.janino.Java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +43,6 @@ public class App {
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf()
-                .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
                 .set("spark.cassandra.connection.host", "cassandra");
         JavaSparkContext context = new JavaSparkContext(conf);

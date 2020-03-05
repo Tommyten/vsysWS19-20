@@ -45,7 +45,6 @@ public class SparkStreaming {
         ObjectMapper objectMapper = new ObjectMapper();
 
         SparkConf conf = new SparkConf()
-                .setMaster("spark://spark-master:7077")
                 .setAppName("Barcode Analysis")
                 .set("spark.cassandra.connection.host", "10.244.1.2");
 

@@ -33,7 +33,7 @@ public class CustomHttpReceiver extends Receiver<Genome> {
     private void receive() {
         URL nginxUrl = null;
         try {
-            nginxUrl = new URL("my-nginx/test.fastq");
+            nginxUrl = new URL("http://my-nginx/test.fastq");
         } catch (Exception ex) {
             stop(ex.getMessage());
         }
