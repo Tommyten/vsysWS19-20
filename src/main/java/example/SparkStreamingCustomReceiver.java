@@ -46,7 +46,7 @@ public class SparkStreamingCustomReceiver {
 
         SparkConf conf = new SparkConf()
                 .setAppName("Barcode Analysis")
-                .set("spark.cassandra.connection.host", "cassandra");
+                .set("spark.cassandra.connection.host", "cassandra-0.cassandra.default.svc.cluster.local,cassandra-1.cassandra.default.svc.cluster.local,cassandra-2.cassandra.default.svc.cluster.local");
 
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
