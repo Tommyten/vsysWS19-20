@@ -43,6 +43,9 @@ public class CustomHttpReceiver extends Receiver<Genome> {
             String key = "";
             String value = "";
             while(!isStopped() && inputLine != null) {
+
+                System.out.println("\n\n\n\n\n\n\n\n READ LINE IS:" + inputLine + "\n\n\n\n\n\n\n\n");
+
                 Matcher matcher = genomeIdPattern.matcher(inputLine);
                 if (matcher.matches()) {
                     key = matcher.group(1);
