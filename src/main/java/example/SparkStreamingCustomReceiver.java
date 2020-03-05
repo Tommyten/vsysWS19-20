@@ -54,9 +54,6 @@ public class SparkStreamingCustomReceiver {
 
         JavaInputDStream<Genome> stream = jssc.receiverStream(new CustomHttpReceiver());
 
-//        JavaDStream<Genome> genomeStream = stream.map((Function<ConsumerRecord<String, String>, Genome>) record -> objectMapper.readValue(record.value(), Genome.class));
-//        JavaDStream<Genome> genomeStream = stream.map(s -> objectMapper.readValue(s, Genome.class));
-
         JavaDStream<Genome> genomesWithBC = stream.map(genome -> {
             determineBarcode(genome);
             return genome;
@@ -73,7 +70,7 @@ public class SparkStreamingCustomReceiver {
         genomesWithBC.print();
 
         jssc.start();              // Start the computation
-        jssc.awaitTermination();   // Wait for the computation to terminate}
+        jssc.awaitTermination();   // Wait for the computation to terminate
     }
 
     private static void determineBarcode(Genome genome) {

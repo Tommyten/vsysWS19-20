@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class CustomHttpReceiver extends Receiver<Genome> {
 
     public CustomHttpReceiver() {
-        super(StorageLevel.MEMORY_AND_DISK_2());
+        super(StorageLevel.MEMORY_AND_DISK_SER_2());
     }
 
     @Override
@@ -43,28 +43,22 @@ public class CustomHttpReceiver extends Receiver<Genome> {
             String key = "";
             String value = "";
             while(!isStopped() && inputLine != null) {
-
-                System.out.println("\n\n\n\n\n\n\n\n READ LINE IS:" + inputLine + "\n\n\n\n\n\n\n\n");
-
                 Matcher matcher = genomeIdPattern.matcher(inputLine);
                 if (matcher.matches()) {
                     key = matcher.group(1);
                 } else if (inputLine.matches(genomeSeqPattern)) {
                     value = inputLine;
                 }
-
                 if (!key.isEmpty() && !value.isEmpty()) {
-                    System.out.println("Received Data!!!!\nKey: " + key + "\nValue: " + value + "\n");
                     store(new Genome(key, value));
                     key = "";
                     value = "";
                 }
                 inputLine = in.readLine();
             }
+            stop("Finished Reading FastQ Files!");
         } catch (IOException e) {
             stop(e.getMessage());
-
         }
-
     }
 }
