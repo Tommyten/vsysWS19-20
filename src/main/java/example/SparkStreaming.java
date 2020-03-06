@@ -46,12 +46,12 @@ public class SparkStreaming {
 
         SparkConf conf = new SparkConf()
                 .setAppName("Barcode Analysis")
-                .set("spark.cassandra.connection.host", "10.244.1.2");
+                .set("spark.cassandra.connection.host", "cassandra-0.cassandra.default.svc.cluster.local,cassandra-1.cassandra.default.svc.cluster.local,cassandra-2.cassandra.default.svc.cluster.local");
 
         JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
 
         Map<String, Object> kafkaParams = new HashMap<>();
-        kafkaParams.put("bootstrap.servers", "10.244.3.6:9092");
+        kafkaParams.put("bootstrap.servers", "kafka-0.kafka-headless.default.svc.cluster.local:9092,kafka-1.kafka-headless.default.svc.cluster.local:9092,kafka-2.kafka-headless.default.svc.cluster.local:9092");
         kafkaParams.put("key.deserializer", StringDeserializer.class);
         kafkaParams.put("value.deserializer", StringDeserializer.class);
         kafkaParams.put("group.id", "temperatureAlert");
